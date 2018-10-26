@@ -1,8 +1,11 @@
 from __future__ import absolute_import
 from __future__ import annotations
 
+from typing import List
+
 import twitter as tw
 
+from src.models.twitter import Tweet
 from src.twitter.common import Keys
 
 
@@ -17,8 +20,26 @@ class TwitterAPI:
                            tweet_mode='extended',
                            sleep_on_rate_limit=True)
 
-    def get_tweet(self, tweet_id: int):
-        return self._api.GetStatus(tweet_id)
+    def _parse_tweet(self, tweet) -> Tweet:
+        hashtags = tweet.hashtags
+        if hashtags is None:
+            hashtags = []
+        media = tweet.media
+        if media is None:
+            media = []
+        urls = tweet.urls
+        if urls is None:
+            urls = []
+        return Tweet(tweet.created_at, tweet.id, tweet.full_text, tweet.favorite_count, hashtags, tweet.lang,
+                     media, tweet.retweet_count, urls)
 
-t = TwitterAPI()
-print(t.get_tweet(1051603095589933059))
+    def get_tweet(self, tweet_id: int):
+        tweet = self._api.GetStatus(tweet_id)
+        return self._parse_tweet(tweet)
+
+    def get_tweet_list(self, ids: List[int]) -> List[Tweet]:
+        rtr = []
+        tweets = self._api.GetStatuses(ids)
+        for t in tweets:
+            rtr.append(self._parse_tweet(t))
+        return rtr
