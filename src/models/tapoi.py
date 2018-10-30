@@ -34,6 +34,13 @@ class YearInWeeks:
             raise ValueError("Week number invalid")
         return self._weeks[week]
 
+    def get_all_weeks(self) -> Dict[int, Dict[str, int]]:
+        """
+        Get all weeks
+        :return: a dictionary with all weeks
+        """
+        return self._weeks
+
     def to_list(self) -> List[Dict[str, int]]:
         """
         Get a list containing all the weeks of the YearInWeeks instance
@@ -43,3 +50,14 @@ class YearInWeeks:
         for k, v in self._weeks.keys():
             l.append(self._weeks[k])
         return l
+
+    def __iter__(self) -> YearInWeeks:
+        self._iter_keys: List[int] = list(self._weeks.keys())
+        return self
+
+    def __next__(self):
+        try:
+            key = self._iter_keys.pop()
+            return self._weeks[key]
+        except IndexError:
+            raise StopIteration

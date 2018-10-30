@@ -6,8 +6,6 @@ import json
 from tapoi.tapoi import Tapoi
 import os
 
-TEST_FILENAME = os.path.join(os.path.dirname(__file__), 'test.txt')
-
 class TapoiConnection:
 
     @staticmethod

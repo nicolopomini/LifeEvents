@@ -1,2 +1,4 @@
 python-twitter
 python-dateutil
+sklearn
+numpy
