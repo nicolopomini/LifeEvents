@@ -4,5 +4,4 @@ venv*
 *.pyc
 src/logic/keys.json
 .pytest_cache
-src/classifier/*.json
 *.dot
