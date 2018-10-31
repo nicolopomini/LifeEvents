@@ -10,6 +10,10 @@ class TapoiConnection:
 
     @staticmethod
     def get_connection() -> Tapoi:
+        """
+        Get a connection object with Tapoi
+        :return: the connection with Tapoi
+        """
         KEYS_FILE = os.path.join(os.path.dirname(__file__), 'keys.json')
         keys = None
         with open(KEYS_FILE) as f:

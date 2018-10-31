@@ -94,9 +94,19 @@ class SimpleClassifiedYear:
         self._weeks: Dict[int, bool] = {}
 
     def with_week(self, week_number: int, classification: bool) -> None:
+        """
+        Add a boolean classification for a specific week to the year
+        :param week_number: number of the week (between 1 and 52)
+        :param classification: boolean classification of the week
+        """
         self._weeks[week_number] = classification
 
     def get_week(self, week_number: int) -> bool:
+        """
+        Get a classification for a specific week
+        :param week_number: number of the week (between 1 and 52)
+        :return: the classification for the week
+        """
         if week_number < 1 or week_number > 52:
             raise ValueError("Week number invalid")
         if week_number not in self._weeks:
@@ -105,11 +115,20 @@ class SimpleClassifiedYear:
 
     def __iter__(self) -> SimpleClassifiedYear:
         self._iter_keys: List[int] = list(self._weeks.keys())
+        self._iter_keys.sort(reverse=True)
         return self
 
     def __next__(self):
         try:
             key = self._iter_keys.pop()
-            return self._weeks[key]
+            return key, self._weeks[key]
         except IndexError:
             raise StopIteration
+
+    def __repr__(self) -> str:
+        repr = "SimpleClassifiedYear: ["
+        for k, v in self:
+            repr += str(k) + ': ' + str(v) + ' '
+        repr += ']'
+        return repr
+
