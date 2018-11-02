@@ -94,7 +94,7 @@ class SimpleDecisionTree(DecisionTree):
                 X = np.zeros((1, len(self._indexes)))
                 for uri in data.get_week(week):
                     if uri in self._indexes:
-                        X[1][self._indexes[uri]] += 1
+                        X[0][self._indexes[uri]] += 1
                 classified_year.with_week(week, self.tree.predict(X)[0])
             else:
                 classified_year.with_week(week, False)

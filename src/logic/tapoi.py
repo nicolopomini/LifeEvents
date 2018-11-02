@@ -69,20 +69,17 @@ class YearInWeeksComputation(ComputationByYearManager):
         :return: a YearInWeeks with all the entities for each week
         """
         # check if instance and asset exist
-        try:
-            self.tapoi.interface.instance.get(self.instance)
-            self.tapoi.interface.asset.get(self.instance, self.asset)
-            year = YearInWeeks()
-            # for each week of the year
-            for i in range(1, 53):
-                computation = EntityMapComputation.allActivities()
-                computation.withAssetTarget(self.instance, self.asset)
-                computation.withWeekPeriod(self.year, i)
-                try:
-                    c = self.tapoi.interface.computation.get(computation).getData().get_dictionary()
-                    year.with_week(i, c)
-                except TapoiNotFoundApiException:  # empty week
-                    year.with_week(i, {})
-            return year
-        except TapoiNotFoundApiException:
-            print("Error, instance of asset don't exist")
+        self.tapoi.interface.instance.get(self.instance)
+        self.tapoi.interface.asset.get(self.instance, self.asset)
+        year = YearInWeeks()
+        # for each week of the year
+        for i in range(1, 53):
+            computation = EntityMapComputation.allActivities()
+            computation.withAssetTarget(self.instance, self.asset)
+            computation.withWeekPeriod(self.year, i)
+            try:
+                c = self.tapoi.interface.computation.get(computation).getData().get_dictionary()
+                year.with_week(i, c)
+            except TapoiNotFoundApiException:  # empty week
+                year.with_week(i, {})
+        return year

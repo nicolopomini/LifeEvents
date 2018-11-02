@@ -20,6 +20,12 @@ class Detection:
         self.start = start
         self.finish = finish
 
+    def to_repr(self) -> dict:
+        return {
+            "from": self.start,
+            "to": self.finish
+        }
+
 
 class DetectionInWeeks(Detection):
     """
