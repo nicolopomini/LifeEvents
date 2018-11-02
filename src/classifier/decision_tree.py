@@ -21,6 +21,7 @@ class DecisionTree:
         """
         self.training_set = dataset_as_path
         self.tree = DecisionTreeClassifier(max_depth=5)
+        self._indexes = {}
 
     def fit(self) -> None:
         """
@@ -35,7 +36,6 @@ class DecisionTree:
         for i in range(len(data)):
             y[i] = data[i]['is_about_life_event'] == 'Yes' or data[i]['is_related_life_event'] == 'Yes'
         # create the real training set, considering only those annotations that have a good confidence
-        self._indexes = {}
         i = 0
         for d in data:
             for annotation in d['annotations']:
@@ -82,11 +82,22 @@ class SimpleDecisionTree(DecisionTree):
         """
         classified_year: SimpleClassifiedYear = SimpleClassifiedYear()
         for week in data.get_all_weeks():
-            X = np.zeros((1, len(self._indexes)))
-            for uri in data.get_week(week):
-                if uri in self._indexes:
-                    X[1][self._indexes[uri]] += 1
-            classified_year.with_week(week, self.tree.predict(X)[0])
+            # check that the week contains at least one entity of the classifier
+            at_least_one = False
+            uris = [d for d in data.get_week(week)]
+            for u in uris:
+                if u in self._indexes:
+                    at_least_one = True
+            # in case at least one entity is found, go for classification
+            # otherwise false
+            if at_least_one:
+                X = np.zeros((1, len(self._indexes)))
+                for uri in data.get_week(week):
+                    if uri in self._indexes:
+                        X[1][self._indexes[uri]] += 1
+                classified_year.with_week(week, self.tree.predict(X)[0])
+            else:
+                classified_year.with_week(week, False)
         return classified_year
 
 
