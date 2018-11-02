@@ -40,5 +40,3 @@ class Manager:
         profiler = WeekProfiling(classified_year)
         detections: List[DetectionInWeeks] = profiler.analyze()
         return detections
-
-# TapoiNotFoundApiException 404 istanza o asset non esistono

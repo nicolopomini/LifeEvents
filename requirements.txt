@@ -2,3 +2,5 @@ python-twitter
 python-dateutil
 sklearn
 numpy
+Flask
+flask-restful
