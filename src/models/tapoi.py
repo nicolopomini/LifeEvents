@@ -61,3 +61,6 @@ class YearInWeeks:
             return self._weeks[key]
         except IndexError:
             raise StopIteration
+
+    def __repr__(self):
+        return self._weeks.__repr__()
