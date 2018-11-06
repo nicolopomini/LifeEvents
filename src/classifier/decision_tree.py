@@ -28,9 +28,17 @@ class DecisionTree:
         Train the classifier
         """
         DATASET_FILE = os.path.join(os.path.dirname(__file__), self.training_set)
-        data = None
         with open(DATASET_FILE) as json_data:
             data = json.load(json_data)
+        # delete duplicate records
+        unique = {}
+        for d in data:
+            if d["id"] not in unique:
+                unique[d["id"]] = d
+        # convert again dataset in a list
+        data = []
+        for d in unique:
+            data.append(unique[d])
         # Create the y array of truths
         y = np.empty((len(data)), dtype=bool)
         for i in range(len(data)):
@@ -52,8 +60,8 @@ class DecisionTree:
         features_names = []
         for f in self._indexes.items():
             features_names.append(f[0])
-        export_graphviz(self.tree, out_file='./tmp.dot', feature_names=features_names,
-                             class_names=['False', 'True'])
+        export_graphviz(self.tree, out_file='tmp.dot', feature_names=features_names,
+                        class_names=['False', 'True'])
         """
 
     def predict(self, data: YearInWeeks):
@@ -94,6 +102,7 @@ class SimpleDecisionTree(DecisionTree):
                 X = np.zeros((1, len(self._indexes)))
                 for uri in data.get_week(week):
                     if uri in self._indexes:
+                        print(uri)
                         X[0][self._indexes[uri]] += 1
                 classified_year.with_week(week, self.tree.predict(X)[0])
             else:

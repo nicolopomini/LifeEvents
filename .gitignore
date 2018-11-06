@@ -5,3 +5,4 @@ venv*
 src/logic/keys.json
 .pytest_cache
 *.dot
+add_account.py
