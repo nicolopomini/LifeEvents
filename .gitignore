@@ -3,6 +3,7 @@ DS_Store
 venv*
 *.pyc
 src/logic/keys.json
+src/twitter/keys.json
 .pytest_cache
 *.dot
 add_account.py
