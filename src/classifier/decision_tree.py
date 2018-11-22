@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 from __future__ import annotations
 
+from typing import Dict
+
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 import os
 import json
@@ -21,7 +23,8 @@ class DecisionTree:
         """
         self.training_set = dataset_as_path
         self.tree = DecisionTreeClassifier(max_depth=5)
-        self._indexes = {}
+        self._indexes: Dict[str, int] = {}
+        self._features: Dict[str, bool] = {}
 
     def fit(self) -> None:
         """
@@ -56,19 +59,27 @@ class DecisionTree:
                 if annotation['confidence'] >= 0.5 and annotation['uri'] in self._indexes:
                     X[i][self._indexes[annotation['uri']]] += 1
         self.tree.fit(X, y)
-        """
-        features_names = []
-        for f in self._indexes.items():
-            features_names.append(f[0])
-        export_graphviz(self.tree, out_file='tmp.dot', feature_names=features_names,
-                        class_names=['False', 'True'])
-        """
+        # create the list of features
+        for feature in self.tree.tree_.feature:
+            for index in self._indexes:
+                if self._indexes[index] == feature:
+                    self._features[index] = True
 
     def predict(self, data: YearInWeeks):
         """
         Schema to be implemented
         """
         raise Exception("Un-implemented method predict()")
+
+    def print_tree(self, file_name: str = "tree.dot") -> None:
+        """
+        Print the tree structure in a .dot file
+        """
+        features_names = []
+        for f in self._indexes.items():
+            features_names.append(f[0])
+        export_graphviz(self.tree, out_file=file_name, feature_names=features_names,
+                        class_names=['False', 'True'])
 
 
 class SimpleDecisionTree(DecisionTree):
@@ -94,7 +105,7 @@ class SimpleDecisionTree(DecisionTree):
             at_least_one = False
             uris = [d for d in data.get_week(week)]
             for u in uris:
-                if u in self._indexes:
+                if u in self._features:
                     at_least_one = True
             # in case at least one entity is found, go for classification
             # otherwise false
